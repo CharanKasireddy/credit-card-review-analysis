@@ -1,8 +1,9 @@
 .DS_Store
-__pycache__/
-*.py[cod]
-.venv/
-venv/
 .idea/
 .vscode/
-
+.env
+*.log
+*.tmp
+*.key
+service-account*.json
+outputs/

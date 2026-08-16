@@ -1,32 +1,33 @@
-# Credit Card Review Analysis
+# Credit Card Review Analysis with Google BigQuery
 
-An end-to-end consumer credit-card analysis that combines 7,513 public review records with current issuer pricing, welcome offers, rewards, and benefits.
+An end-to-end SQL analytics project that combines 7,513 public credit-card review records with current issuer pricing, welcome offers, rewards, and benefits. All data cleaning, aggregation, scoring, ranking, validation, and output generation is implemented in **Google BigQuery Standard SQL**.
 
-The project answers two separate questions:
+The project answers two questions:
 
 1. Which cards received the strongest eligible consumer-review scores in the dataset?
-2. Which of those cards currently provides the best value for borrowing cost, annual fee, welcome bonus, shopping rewards, lifestyle benefits, or travel?
+2. Which of those cards currently leads borrowing cost, annual fee, welcome offer, shopping rewards, lifestyle benefits, or travel benefits?
 
-![Credit card analysis dashboard](images/dashboard.png)
+![BigQuery credit card analysis dashboard](images/dashboard.png)
 
 ## Project highlights
 
-- Analyzed **7,513 reviews** covering **59 credit cards**.
-- Identified **1,616 usable numeric ratings**, representing 21.5% of review rows.
+- Analyzed **7,513 reviews** covering **59 credit cards** in BigQuery.
+- Retained **1,616 usable numeric ratings** on the source's 0–5 scale, including half-point ratings.
 - Required at least **20 numeric ratings** before a card could enter the top five.
 - Used a Bayesian-adjusted score to reduce the influence of small samples.
+- Added BigQuery `ASSERT` checks for row count, distinct cards, rating count, global mean, and top-five order.
 - Verified current product terms using official Axis Bank, ICICI Bank, and SBI Card pages.
-- Built a formula-driven Excel workbook, native charts, and a ten-page case-study report.
+- Packaged the BigQuery results in a charted Excel workbook and a written case-study report.
 
 ## Top five reviewed cards
 
 | Rank | Reviewed card | Total reviews | Numeric ratings | Average rating | Bayesian score |
 |---:|---|---:|---:|---:|---:|
-| 1 | Axis Bank Myzone Credit card | 75 | 20 | 4.70 | 3.969 |
-| 2 | ICICI CORAL VISA CONTACTLESS | 20 | 20 | 4.53 | 3.881 |
-| 3 | SBI ELITE | 124 | 20 | 4.50 | 3.869 |
-| 4 | CITIBANK PREMIERMILES | 20 | 20 | 4.45 | 3.844 |
-| 5 | AXIS FLIPKART | 85 | 20 | 4.43 | 3.831 |
+| 1 | Axis Bank Myzone Credit card | 75 | 20 | 4.700 | 3.968502 |
+| 2 | ICICI CORAL VISA CONTACTLESS | 20 | 20 | 4.525 | 3.881002 |
+| 3 | SBI ELITE | 124 | 20 | 4.500 | 3.868502 |
+| 4 | CITIBANK PREMIERMILES | 20 | 20 | 4.450 | 3.843502 |
+| 5 | AXIS FLIPKART | 85 | 20 | 4.425 | 3.831002 |
 
 ## Category leaders
 
@@ -37,23 +38,23 @@ The project answers two separate questions:
 | Lowest borrowing cost | Five-way tie | Each current product lists a 3.75% monthly finance charge |
 | Best ongoing fee and waiver | ICICI Bank Coral | ₹500 annual fee, waived at ₹1.5 lakh annual spend |
 | Best welcome offer | SBI Card ELITE | ₹5,000 e-gift voucher |
-| Best shopping rewards | Flipkart Axis Bank | High, clearly defined partner cashback rates |
+| Best shopping rewards | Flipkart Axis Bank | Strong explicit partner cashback rates |
 | Broadest lifestyle benefits | SBI Card ELITE | Welcome voucher, movies, accelerated rewards, and milestones |
-| Best travel package | Axis Bank Horizon | Airline/travel miles and lounge access; successor caveat applies |
+| Best travel package | Axis Bank Horizon | Travel miles and lounge access; successor caveat applies |
 
 > **Legacy-product note:** the review score belongs to Citi PremierMiles. Current pricing and travel benefits are shown for Axis Horizon, the migrated successor, and are not historical Citi terms.
 
-## Methodology
+## BigQuery methodology
 
-Cards were grouped by exact card name. For each card, the analysis calculated total reviews, numeric-rating count, average rating, and a Bayesian-adjusted score:
+Cards are grouped by exact card name. The ranking query calculates total reviews, usable numeric-rating count, average rating, and a Bayesian-adjusted score:
 
 ```text
 Weighted score = (n × card mean + 20 × global mean) ÷ (n + 20)
 ```
 
-The global numeric-rating mean was 3.237. Only cards with at least 20 numeric ratings were eligible for the top-five ranking.
+The global numeric-rating mean is 3.237005. Only cards with at least 20 numeric ratings are eligible.
 
-Issuer pages publish a monthly finance charge rather than a U.S.-style APR. The workbook therefore provides a normalized comparison:
+Issuer pages publish a monthly finance charge rather than a U.S.-style APR. BigQuery normalizes this with:
 
 ```text
 Effective annualized rate = (1 + monthly finance charge)^12 − 1
@@ -70,11 +71,17 @@ credit-card-review-analysis/
 ├── analysis/
 │   └── credit_card_review_analysis.xlsx
 ├── data/
-│   ├── raw/All_Reviews.xlsx
-│   ├── processed/card_ranking.csv
-│   ├── processed/current_terms.csv
-│   └── processed/top_five_credit_cards.csv
+│   ├── raw/
+│   │   ├── All_Reviews.csv
+│   │   └── All_Reviews.xlsx
+│   └── processed/
+│       ├── analysis_summary.csv
+│       ├── card_ranking.csv
+│       ├── category_leaders.csv
+│       ├── current_terms.csv
+│       └── top_five_credit_cards.csv
 ├── docs/
+│   ├── DATA_DICTIONARY.md
 │   ├── METHODOLOGY.md
 │   └── SOURCES.md
 ├── images/
@@ -83,32 +90,39 @@ credit-card-review-analysis/
 │   ├── rating_chart.png
 │   └── review_count_chart.png
 ├── report/
-│   └── credit_card_review_analysis.pdf
-├── src/analyze_credit_cards.py
+│   └── credit_card_review_analysis.md
+├── sql/
+│   ├── 00_setup_and_load.sql
+│   ├── 01_clean_reviews.sql
+│   ├── 02_rank_cards.sql
+│   ├── 03_current_terms.sql
+│   ├── 04_category_leaders.sql
+│   ├── 05_create_outputs.sql
+│   ├── 06_validate.sql
+│   ├── 07_export_to_gcs.sql
+│   └── README.md
 ├── CITATION.cff
 ├── CONTRIBUTING.md
 ├── LICENSE
-├── requirements.txt
 └── README.md
 ```
 
-## Reproduce the analysis
+## Reproduce in BigQuery
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python src/analyze_credit_cards.py
-```
+1. Upload `data/raw/All_Reviews.csv` to a Google Cloud Storage bucket.
+2. Replace `YOUR_PROJECT_ID` and `YOUR_BUCKET` in the SQL files.
+3. Run [sql/00_setup_and_load.sql](sql/00_setup_and_load.sql) through [sql/06_validate.sql](sql/06_validate.sql) in numeric order in the BigQuery console.
+4. Optionally run [sql/07_export_to_gcs.sql](sql/07_export_to_gcs.sql) to export the result tables.
 
-The script reads `data/raw/All_Reviews.xlsx` and recreates the processed ranking files. The committed charts were generated from the formula-driven Excel workbook.
+The scripts use BigQuery Standard SQL only. The source-load statement supports quoted newlines in review text, and the cleaning query uses `SAFE_CAST` so nonnumeric ratings become `NULL` instead of failing the pipeline.
 
 ## Deliverables
 
+- [BigQuery SQL pipeline](sql/README.md)
 - [Excel analysis workbook](analysis/credit_card_review_analysis.xlsx)
-- [Case-study PDF](report/credit_card_review_analysis.pdf)
-- [Interactive Google Doc report](https://docs.google.com/document/d/1jtIO6Pto2IyVWJGy_9dO-KrbuTTJK7tw2HE1u3aZOro/edit)
+- [Case-study report](report/credit_card_review_analysis.md)
 - [Methodology](docs/METHODOLOGY.md)
+- [Data dictionary](docs/DATA_DICTIONARY.md)
 - [Primary sources](docs/SOURCES.md)
 
 ## Limitations
@@ -121,6 +135,6 @@ The script reads `data/raw/All_Reviews.xlsx` and recreates the processed ranking
 
 ## Data license and attribution
 
-The review data comes from the public [Credit Card Reviews dataset on Kaggle](https://www.kaggle.com/datasets/arjunanc/credit-card-reviews), published by Arjun N C under CC0. Current product terms are attributed to their official issuer pages in [docs/SOURCES.md](docs/SOURCES.md).
+The review data comes from the public [Credit Card Reviews dataset on Kaggle](https://www.kaggle.com/datasets/arjunanc/credit-card-reviews), published by Arjun N C under CC0. Current product terms are attributed to official issuer pages in [docs/SOURCES.md](docs/SOURCES.md).
 
-Project code and original documentation are available under the [MIT License](LICENSE).
+Project SQL and original documentation are available under the [MIT License](LICENSE).

@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this project, please cite it as below."
-title: "Credit Card Review Analysis"
+title: "Credit Card Review Analysis with Google BigQuery"
 type: software
 authors:
   - family-names: Kasireddy
@@ -8,4 +8,4 @@ authors:
 year: 2026
 license: MIT
 repository-code: "https://github.com/CharanKasireddy/credit-card-review-analysis"
-abstract: "An analysis of public Indian credit-card reviews combined with current issuer fees, welcome offers, rewards, and benefits."
+abstract: "A Google BigQuery Standard SQL analysis of public Indian credit-card reviews combined with current issuer fees, welcome offers, rewards, and benefits."
