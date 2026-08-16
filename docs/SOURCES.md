@@ -1,5 +1,7 @@
 # Sources
 
+Sources were last checked on 2026-08-15. Issuer terms remain time-sensitive.
+
 ## Review dataset
 
 - [Credit Card Reviews — Kaggle](https://www.kaggle.com/datasets/arjunanc/credit-card-reviews)  
@@ -30,3 +32,16 @@
 
 Issuer terms are time-sensitive and should be checked again before a consumer applies.
 
+## Google BigQuery references
+
+- [Load statements in GoogleSQL](https://cloud.google.com/bigquery/docs/reference/standard-sql/load-statements)
+
+  `LOAD DATA`, explicit CSV schemas, header skipping, UTF-8 input, and quoted-newline support.
+
+- [Conversion functions](https://cloud.google.com/bigquery/docs/reference/standard-sql/conversion_functions)
+
+  `SAFE_CAST` behavior for converting rating strings without terminating the pipeline on invalid values.
+
+- [Debugging statements](https://cloud.google.com/bigquery/docs/reference/standard-sql/debugging-statements)
+
+  BigQuery `ASSERT` statements used by the validation script.
