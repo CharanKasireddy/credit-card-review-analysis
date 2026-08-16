@@ -1,0 +1,6 @@
+Card Name,category,bank,total_reviews,numeric_ratings,average_rating,bayesian_score,eligible,eligible_rank
+Axis Bank Myzone Credit card,Lifestyle,Axis Bank,75,20,4.7,3.9685024752475244,True,1
+ICICI CORAL VISA CONTACTLESS,Lifestyle,ICICI,20,20,4.525,3.8810024752475245,True,2
+SBI ELITE,Lifestyle,SBI,124,20,4.5,3.8685024752475243,True,3
+CITIBANK PREMIERMILES,Travel,Citi Bank,20,20,4.45,3.8435024752475244,True,4
+AXIS FLIPKART,Shopping,Axis Bank,85,20,4.425,3.8310024752475242,True,5
